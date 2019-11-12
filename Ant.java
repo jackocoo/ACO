@@ -17,7 +17,7 @@ public class Ant {
 
     }
 
-    public boolean containsCities(city1, city2) {
+    public boolean containsCities(int city1, int city2) {
         boolean answer = false;
         if (Arrays.asList(tour).contains(city1) && Arrays.asList(tour).contains(city2)) {
             answer = true;

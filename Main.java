@@ -54,5 +54,11 @@ public class Main {
             System.out.println("IO Exception");
         }
 
+        Environment env = new Environment(cities.size(), 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
+        System.out.println("before:" );
+        env.printDistances();
+        env.calculateDistances(cities);
+        System.out.println("after: ");
+        env.printDistances();
     }
 }
