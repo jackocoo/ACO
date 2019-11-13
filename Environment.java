@@ -98,8 +98,10 @@ public class Environment {
 
 		if (bestSoFar.containsCities(city1, city2)) {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + this.rho * (1.0 /this.numCities);
+			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + this.rho * (1.0 /this.numCities);
 		} else {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2];
+			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1];
 		}
 
 	}
@@ -124,8 +126,10 @@ public class Environment {
 		
 		if (bestSoFar.containsCities(city1, city2)) {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
+			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
 		} else {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2);
+			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2);
 
 		}
 	}
@@ -229,10 +233,12 @@ public class Environment {
 		return this.numCities;
 	}
 
-	public void setInitialPheromones(double val) {
+	public void setInitialPheromones(int startingCity) {
+		Ant ant = new Ant(this);
+		this.tau = ant.calculateInitialPhermone(startingCity);
 		for (int i = 0; i < this.numCities; i++) {
 			for (int j = 0; j < this.numCities; j++) {
-				this.pheromones[i][j] = val;
+				this.pheromones[i][j] = this.tau;
 			}
 		}
 	}
