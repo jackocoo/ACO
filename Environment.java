@@ -16,6 +16,7 @@ public class Environment {
 	private double[][] pheromones;
 	private Ant bestSoFar;
 	private int numCities;
+	private int numAnts;
 
 	public double alpha;
 	public double beta;
@@ -29,9 +30,10 @@ public class Environment {
 
 	public List<Ant> antList = new ArrayList<Ant>();
 
-	public Environment(int numCities, double alpha, double beta, double rho, double elitistNum, 
+	public Environment(int numCities, int numAnts, double alpha, double beta, double rho, double elitistNum, 
 						double epsilon, double tau, double q ) {
 
+		this.numAnts = numAnts;
 		this.numCities = numCities;
 		this.distances = new double[numCities][numCities];
 		this.pheromones = new double[numCities][numCities];
@@ -215,6 +217,19 @@ public class Environment {
 		return counter;
 	}
 
+	public void setAntList() {
+		int i = 0;
+		Ant ant;
+		while(i < this.numAnts) {
+			ant = new Ant(i, this);
+			antList.add(ant);
+			i++;
+		}
+	}
+
+	public List<Ant> getAntList() {
+		return this.antList;
+	}
 
 
 	public static double round(double value, int places) {
@@ -234,7 +249,7 @@ public class Environment {
 	}
 
 	public void setInitialPheromones(int startingCity) {
-		Ant ant = new Ant(this);
+		Ant ant = new Ant(0, this);
 		this.tau = ant.calculateInitialPhermone(startingCity);
 		for (int i = 0; i < this.numCities; i++) {
 			for (int j = 0; j < this.numCities; j++) {
@@ -250,6 +265,18 @@ public class Environment {
 
 			for(int j = 0; j < this.distances.length; j++) {
 				line += " " + round(this.distances[i][j], 1);
+			}
+
+			System.out.println(line);
+		}
+	}
+
+	public void printPheromones() {
+		for(int i = 0; i < this.pheromones.length; i++) {
+			String line = "";
+
+			for(int j = 0; j < this.pheromones.length; j++) {
+				line += " " + round(this.pheromones[i][j], 1);
 			}
 
 			System.out.println(line);

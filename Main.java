@@ -54,15 +54,22 @@ public class Main {
             System.out.println("IO Exception");
         }
 
-        Environment env = new Environment(cities.size(), 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
-        System.out.println("before:" );
-        env.printDistances();
-        env.calculateDistances(cities);
-        System.out.println("after: ");
-        env.printDistances();
+        Environment env = new Environment(cities.size(), 100, 0.1, 0.1, 0.1, 0.1, 0.1, 0, 0.1);
+        // System.out.println("before:" );
+        // env.calculateDistances(cities);
+        // env.setInitialPheromones(0);
 
-        System.out.println("test greedy tour construction");
-        Ant testAnt = new Ant(env);
-        testAnt.constructGreedyTour(0);
+        // System.out.println("after: ");
+        // env.printDistances();
+
+        // env.printPheromones();
+
+        // System.out.println("test greedy tour construction");
+        // Ant testAnt = new Ant(env);
+        // testAnt.constructGreedyTour(0);
+
+        AntColonySystem acs = new AntColonySystem(env, cities, 100);
+        acs.optimize();
+
     }
 }

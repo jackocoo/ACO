@@ -19,11 +19,11 @@ public class Ant {
 
     private Random rand = new Random();
 
+    private int id;
 
 
-
-    public Ant(Environment world) {
-
+    public Ant(int id, Environment world) {
+        this.id = id;
         this.world = world;
         this.numCities = world.getEnvironmentSize();
         this.totalCost = Double.POSITIVE_INFINITY;
@@ -52,8 +52,8 @@ public class Ant {
         double[] row = distances[currentCity];
         while (visited.size() < numCities) {
             double currDistance = Double.POSITIVE_INFINITY;
-            row = distances[currentCity];
             int bestCitySoFar = 0;
+            row = distances[bestCitySoFar];
             for (int i = 0; i < row.length; i++) {
                 if ((row[i] < currDistance) && !visited.contains(i)) {
 
@@ -65,13 +65,15 @@ public class Ant {
             currentCity = bestCitySoFar;
             greedyTour.add(bestCitySoFar);
             visited.add(bestCitySoFar);
-            System.out.println(greedyTour);
         }
         return tourLength;
     }
 
     public double calculateInitialPhermone(int startingCity) {
-        return 1.0 / this.constructGreedyTour(startingCity) * this.world.getNumCities();
+        double answer = 1.0 / this.constructGreedyTour(startingCity) * this.world.getNumCities();
+        // System.out.println("Greed tour total" + this.constructGreedyTour(startingCity));
+        // System.out.println("Answer is " + answer);
+        return answer;
     }
    
     public Environment getEnvironment() {
@@ -117,6 +119,12 @@ public class Ant {
         tourLength += this.world.getDistance(currentCityId, startingCity);
 
         return tourLength;
+    }
+
+    public String toString() {
+        String rep = "";
+        rep += this.id;
+        return rep;
     }
 
 }
