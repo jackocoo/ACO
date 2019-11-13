@@ -60,5 +60,9 @@ public class Main {
         env.calculateDistances(cities);
         System.out.println("after: ");
         env.printDistances();
+
+        System.out.println("test greedy tour construction");
+        Ant testAnt = new Ant(env);
+        testAnt.constructGreedyTour(0);
     }
 }

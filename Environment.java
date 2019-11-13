@@ -13,6 +13,7 @@ public class Environment {
 	private double[][] distances;
 	private double[][] pheromones;
 	private Ant bestSoFar;
+	private int numCities;
 
 	public double alpha;
 	public double beta;
@@ -26,7 +27,7 @@ public class Environment {
 
 	public Environment(int numCities, double alpha, double beta, double rho, double elitistNum, 
 						double epsilon, double tau, double q ) {
-
+		this.numCities = numCities;
 		this.distances = new double[numCities][numCities];
 		this.pheromones = new double[numCities][numCities];
 		this.alpha = alpha;
@@ -77,11 +78,6 @@ public class Environment {
 				this.distances[j][i] = distance;
 			}
 		}
-	}
-
-
-	public void updatePheromones(int city1, int city2, String acoType) {
-
 	}
 
 	private void antColonySystemGlobalUpdate(int city1, int city2) {
@@ -141,7 +137,23 @@ public class Environment {
     	BigDecimal bd = BigDecimal.valueOf(value);
     	bd = bd.setScale(places, RoundingMode.HALF_UP);
     	return bd.doubleValue();
-}
+	}
+
+	public double[][] getDistanceMatrix() {
+		return this.distances;
+	}
+
+	public int getNumCities() {
+		return this.numCities;
+	}
+
+	public void setInitialPheromones(double val) {
+		for (int i = 0; i < this.numCities; i++) {
+			for (int j = 0; j < this.numCities; j++) {
+				this.pheromones[i][j] = val;
+			}
+		}
+	}
 
 	public void printDistances() {
 

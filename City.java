@@ -25,4 +25,8 @@ public class City {
         return this.yCoord;
     }
 
+    public int getCityId() {
+        return this.id;
+    }
+
 }
