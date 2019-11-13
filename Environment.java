@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
 
 
 
@@ -17,16 +19,19 @@ public class Environment {
 
 	public double alpha;
 	public double beta;
-	public double rho;
+	public double rho; //evaporation rate 
 	public double elitistNum;
-	public double epsilon;
-	public double tau;
-	public double q;
+	public double epsilon; //decaying coefficient
+	public double tau; //1 / length of greedy tour * num cities
+	public double q; //prob for choosing to use greedy or prob
+
+	public Random rand = new Random();
 
 	public List<Ant> antList = new ArrayList<Ant>();
 
 	public Environment(int numCities, double alpha, double beta, double rho, double elitistNum, 
 						double epsilon, double tau, double q ) {
+
 		this.numCities = numCities;
 		this.distances = new double[numCities][numCities];
 		this.pheromones = new double[numCities][numCities];
@@ -54,6 +59,15 @@ public class Environment {
 
 */
 
+
+	public int getEnvironmentSize() {
+		return this.numCities;
+	}
+
+	public double getQ() {
+		return this.q;
+	}
+
 	public void calculateDistances(List<City> cityList) {
 
 		for(int i = 0; i < cityList.size(); i++) {
@@ -80,41 +94,36 @@ public class Environment {
 		}
 	}
 
-	private void antColonySystemGlobalUpdate(int city1, int city2) {
+	public void antColonySystemGlobalUpdate(int city1, int city2) {
 
 		if (bestSoFar.containsCities(city1, city2)) {
-			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + this.rho * (1.0 / bestSoFar.getLength());
+			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + this.rho * (1.0 /this.numCities);
 		} else {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2];
 		}
 
 	}
 
-	private void antColonySystemLocalUpdate(int city1, int city2) {
-
-		if (bestSoFar.containsCities(city1, city2)) {
-			this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2] + this.epsilon * (1.0 /bestSoFar.getLength());
-		} else {
-			this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2];
-
-		}
+	public void antColonySystemLocalUpdate(int city1, int city2) {
+			this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2] + this.epsilon * this.tau;
+			this.pheromones[city2][city1] = (1.0 - this.epsilon) * this.pheromones[city2][city1] + this.epsilon * this.tau;
 
 	}
 
-	private double calculateTotal(int city1, int city2) {
+	public double calculateTotal(int city1, int city2) {
 		double total = 0;
 		for (Ant ant : antList) {
 			if (ant.containsCities(city1, city2)) {
-				total += (1.0/ant.getLength());
+				total += (1.0/this.numCities);
 			}
 		}
 		return total;
 	}
 
-	private void elitistPheromoneUpdate(int city1, int city2, int numAnts, Ant ant) {
+	public void elitistPheromoneUpdate(int city1, int city2, int numAnts, Ant ant) {
 		
 		if (bestSoFar.containsCities(city1, city2)) {
-			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /bestSoFar.getLength());
+			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
 		} else {
 			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2);
 
@@ -122,14 +131,87 @@ public class Environment {
 	}
 
 	public double getDistance(int city1, int city2) {
-		return 0.0;
+		return this.distances[city1][city2];
 
 	}
 
 	public double getPheromones(int city1, int city2) {
-		return 0.0;
+		return this.pheromones[city1][city2];
 
 	}
+
+
+
+	public int getNextCityGreedy(int cityId, Set<Integer> visitedSet) {
+
+		double[] neighboringCities = this.distances[cityId];
+		double[] neighoringPheromones = this.pheromones[cityId];
+
+		double bestProductSoFar = 0.0;
+		int bestCitySoFar = 0;
+
+		for(int i = 0; i < neighboringCities.length; i++) {
+
+			double product = 0.0;
+
+			if (!visitedSet.contains(i)) {
+				double cityDistance = 1.0 / neighboringCities[i];
+				double pheromoneContent = neighoringPheromones[i];
+				product = pheromoneContent * Math.pow(cityDistance, this.beta);
+
+				if(product > bestProductSoFar) {
+					bestProductSoFar = product;
+					bestCitySoFar = i;
+				}
+			}
+		}
+		return bestCitySoFar;
+	}
+
+
+	public int getNextCityProb(int cityId, Set<Integer> visitedSet) {
+
+		double[] probabilities = new double[this.distances.length];
+
+		double[] neighboringCities = this.distances[cityId];
+		double[] neighoringPheromones = this.pheromones[cityId];
+
+		double runningProbSum = 0.0;
+
+		for(int i = 0; i < neighboringCities.length; i++) {
+
+			double product = 0.0;
+
+			if (!visitedSet.contains(i)) {
+				double cityDistance = 1.0 / neighboringCities[i];
+				double pheromoneContent = neighoringPheromones[i];
+				product = Math.pow(pheromoneContent, this.alpha) * Math.pow(cityDistance, this.beta);
+			}
+			probabilities[i] = product;
+			runningProbSum += product;
+		}
+
+		for (int i = 0; i < neighboringCities.length; i++) {
+			probabilities[i] = probabilities[i] / runningProbSum;
+		}
+		return pickCityFromProbabilities(probabilities);
+	}
+
+
+	public static int pickCityFromProbabilities(double[] probabilities) {
+
+		Random randy = new Random();
+		double randDouble = randy.nextDouble();
+
+		int counter = 0;
+
+		while(probabilities[counter] < randDouble) {
+			counter++;
+		}
+		return counter;
+	}
+
+
 
 	public static double round(double value, int places) {
     	if (places < 0) throw new IllegalArgumentException();
