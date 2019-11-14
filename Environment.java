@@ -47,21 +47,6 @@ public class Environment {
 
 	}
 
-/*
-
-
-	[1, 2, 3, 4]
-
-
-	[0, 2, 3, 4]
-	[2, 0, 0, 0]
-	[3, 0, 0, 0]
-	[4, 0, 0, 0]
-
-
-*/
-
-
 	public int getEnvironmentSize() {
 		return this.numCities;
 	}
@@ -146,8 +131,6 @@ public class Environment {
 
 	}
 
-
-
 	public int getNextCityGreedy(int cityId, Set<Integer> visitedSet) {
 
 		double[] neighboringCities = this.distances[cityId];
@@ -178,7 +161,6 @@ public class Environment {
 	public int getNextCityProb(int cityId, Set<Integer> visitedSet) {
 
 		double[] probabilities = new double[this.distances.length];
-
 		double[] neighboringCities = this.distances[cityId];
 		double[] neighoringPheromones = this.pheromones[cityId];
 
@@ -197,8 +179,11 @@ public class Environment {
 			runningProbSum += product;
 		}
 
+		double probCounter = 0.0;
 		for (int i = 0; i < neighboringCities.length; i++) {
-			probabilities[i] = probabilities[i] / runningProbSum;
+			double prob = probabilities[i] / runningProbSum;
+			probCounter += prob;
+			probabilities[i] = probCounter;
 		}
 		return pickCityFromProbabilities(probabilities);
 	}
@@ -248,12 +233,11 @@ public class Environment {
 		return this.numCities;
 	}
 
-	public void setInitialPheromones(int startingCity) {
-		Ant ant = new Ant(0, this);
-		this.tau = ant.calculateInitialPhermone(startingCity);
+	public void setInitialPheromones(double pheromoneContent) {
+		this.tau = pheromoneContent;
 		for (int i = 0; i < this.numCities; i++) {
 			for (int j = 0; j < this.numCities; j++) {
-				this.pheromones[i][j] = this.tau;
+				this.pheromones[i][j] = pheromoneContent;
 			}
 		}
 	}

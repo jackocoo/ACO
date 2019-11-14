@@ -69,10 +69,8 @@ public class Ant {
         return tourLength;
     }
 
-    public double calculateInitialPhermone(int startingCity) {
-        double answer = 1.0 / this.constructGreedyTour(startingCity) * this.world.getNumCities();
-        // System.out.println("Greed tour total" + this.constructGreedyTour(startingCity));
-        // System.out.println("Answer is " + answer);
+    public double calculateInitialPhermone() {
+        double answer = 1.0 / this.constructGreedyTour(0) * this.world.getNumCities();
         return answer;
     }
    
@@ -90,7 +88,7 @@ public class Ant {
         int tourCounter = 0;
         double tourLength = 0;
 
-        int startingCity = rand.nextInt();
+        int startingCity = rand.nextInt(worldSize);
 
         visitedCities.add(startingCity);
         this.tour[tourCounter] = startingCity;
@@ -114,6 +112,9 @@ public class Ant {
             visitedCities.add(nextCityId);
             tourLength += this.world.getDistance(currentCityId, nextCityId);
             tourCounter++;
+            currentCityId = nextCityId;
+            this.printTour();
+            
         }
 
         tourLength += this.world.getDistance(currentCityId, startingCity);
@@ -125,6 +126,18 @@ public class Ant {
         String rep = "";
         rep += this.id;
         return rep;
+
+    }
+
+    public void printTour() {
+
+        String output = "[";
+
+        for(int i = 0; i < this.tour.length; i++) {
+            output += " " + this.tour[i] + ",";
+        }
+        output += "]";
+        System.out.println(output);
     }
 
 }

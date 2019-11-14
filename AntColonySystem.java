@@ -17,7 +17,9 @@ public class AntColonySystem {
 
     public void optimize() {
         this.env.calculateDistances(cityList);
-        this.env.setInitialPheromones(0);
+        Ant testAnt = new Ant(-1, this.env);
+        double tauNot = testAnt.calculateInitialPhermone();
+        this.env.setInitialPheromones(tauNot);
 
         this.env.setAntList();
 
