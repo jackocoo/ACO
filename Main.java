@@ -71,7 +71,7 @@ public class Main {
         //AntColonySystem acs = new AntColonySystem(env, cities, 100);
         //acs.optimize();
 
-        Environment env = new Environment(cities.size(), 5, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
+        Environment env = new Environment(cities.size(), 10, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
         // System.out.println("before:" );
         // env.printDistances();
         // env.calculateDistances(cities);

@@ -113,7 +113,7 @@ public class Ant {
             tourLength += this.world.getDistance(currentCityId, nextCityId);
             tourCounter++;
             currentCityId = nextCityId;
-            this.printTour();
+            //Sthis.printTour();
             
         }
 
