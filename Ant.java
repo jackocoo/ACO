@@ -129,6 +129,10 @@ public class Ant {
 
     }
 
+    public int[] getTour() {
+        return this.tour;
+    }
+
     public void printTour() {
 
         String output = "[";

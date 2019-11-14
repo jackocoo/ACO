@@ -35,18 +35,20 @@ public class AntColonySystem {
         while (i < this.numIterations) {
             for (int j = 1; j < antList.size(); j++) {
                 double tourCost = antList.get(i).makeProbTour();
+                System.out.println("tour cost" + tourCost);
                 if (tourCost < bestSoFar) {
                     bestSoFar = tourCost;
-                    System.out.println(bestSoFar);
+                    // System.out.println("the bestsofar" + bestSoFar);
                     bestAnt = antList.get(i);
                 }
-                bestAntsList.add(bestAnt);                
+                System.out.println("hit");
+                bestAntsList.add(bestAnt);
+                // System.out.println("best ant tour");
+                bestAnt.printTour();                
             }
-            System.out.println(bestAntsList);
+            this.env.antColonySystemGlobalUpdate(bestAnt);
             i++;
         }
-
-
     }
 
 }
