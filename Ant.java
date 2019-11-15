@@ -78,6 +78,27 @@ public class Ant {
         return this.world;
     }
 
+    public double setTour(int[] newTour) {
+        this.tour = newTour.clone();
+
+        double totalLength = 0;
+        for(int i = 0; i < this.tour.length; i++) {
+            
+            int next;
+            if(i == this.tour.length - 1){
+                next = 0;
+            } else {
+                next = i + 1;
+            }
+            System.out.println( this.tour[i] + " and " + this.tour[next]);
+            double distance = this.world.getDistance(this.tour[i], this.tour[next]);
+            System.out.println(distance);
+            totalLength += distance;
+        }   
+        System.out.println(totalLength);
+        return totalLength;
+    }
+
     public double makeProbTour() {
 
         Set<Integer> visitedCities = new HashSet<Integer>();
@@ -113,11 +134,12 @@ public class Ant {
             tourLength += this.world.getDistance(currentCityId, nextCityId);
             tourCounter++;
             currentCityId = nextCityId;
-            //Sthis.printTour();
+            //this.printTour();
             
         }
 
         tourLength += this.world.getDistance(currentCityId, startingCity);
+        //this.printTour();
 
         return tourLength;
     }
@@ -127,6 +149,13 @@ public class Ant {
         rep += this.id;
         return rep;
 
+    }
+
+
+    public Ant cloneAnt() {
+        Ant newAnt = new Ant(this.id, this.world);
+        newAnt.setTour(this.tour);
+        return newAnt;
     }
 
     public int[] getTour() {
@@ -140,7 +169,7 @@ public class Ant {
         for(int i = 0; i < this.tour.length; i++) {
             output += " " + this.tour[i] + ",";
         }
-        output += "]";
+        output += "] ! ";
         System.out.println(output);
     }
 

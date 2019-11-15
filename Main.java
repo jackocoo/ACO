@@ -13,7 +13,7 @@ public class Main {
         int dimension = 0;
         String edgeWeightType = "";
         List<City> cities = new ArrayList<City>();
-        String filename = "ulysses16.tsp";
+        String filename = "a280.tsp";
 
         try {
             File initialFile = new File(filename);
@@ -38,9 +38,11 @@ public class Main {
                     }
                 } else {
                     if (counter <= dimension) {
-                        String[] temp = data.split(" ");
-                        double xCoord = Double.parseDouble(temp[1]);
-                        double yCoord = Double.parseDouble(temp[2]);
+                        String[] temp = data.trim().replace("  ", " ").replace("  ", " ").split(" ");
+                        System.out.println(data);
+                        System.out.println("data 1 = [" + temp[0] + "]");
+                        double xCoord = Double.parseDouble(temp[1].trim());
+                        double yCoord = Double.parseDouble(temp[2].trim());
                         city = new City(counter, xCoord, yCoord);
                         cities.add(city);
                         counter++;
@@ -71,7 +73,7 @@ public class Main {
         //AntColonySystem acs = new AntColonySystem(env, cities, 100);
         //acs.optimize();
 
-        Environment env = new Environment(cities.size(), 10, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
+        Environment env = new Environment(cities.size(), 50, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
         // System.out.println("before:" );
         // env.printDistances();
         // env.calculateDistances(cities);
@@ -94,5 +96,8 @@ public class Main {
 
         AntColonySystem acs = new AntColonySystem(env, cities, 100);
         acs.optimize();
+
+        //double bestDistance = best.setTour(bestTour);
+        //System.out.println("best distance "  + bestDistance);
     }
 }

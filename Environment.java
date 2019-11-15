@@ -237,7 +237,7 @@ public class Environment {
 		this.tau = pheromoneContent;
 		for (int i = 0; i < this.numCities; i++) {
 			for (int j = 0; j < this.numCities; j++) {
-				this.pheromones[i][j] = pheromoneContent;
+				this.pheromones[i][j] = 1 * pheromoneContent;
 			}
 		}
 	}
