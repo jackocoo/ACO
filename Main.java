@@ -39,8 +39,8 @@ public class Main {
                 } else {
                     if (counter <= dimension) {
                         String[] temp = data.trim().replace("  ", " ").replace("  ", " ").split(" ");
-                        System.out.println(data);
-                        System.out.println("data 1 = [" + temp[0] + "]");
+                        // System.out.println(data);
+                        // System.out.println("data 1 = [" + temp[0] + "]");
                         double xCoord = Double.parseDouble(temp[1].trim());
                         double yCoord = Double.parseDouble(temp[2].trim());
                         city = new City(counter, xCoord, yCoord);
@@ -50,54 +50,18 @@ public class Main {
                 }
             }
 
-            System.out.println(cities);
+            // System.out.println(cities);
             buffReader.close();
         } catch (IOException e) {
             System.out.println("IO Exception");
         }
 
-        //Environment env = new Environment(cities.size(), 100, 0.1, 0.1, 0.1, 0.1, 0.1, 0, 0.1);
-        // System.out.println("before:" );
-        // env.calculateDistances(cities);
-        // env.setInitialPheromones(0);
-
-        // System.out.println("after: ");
-        // env.printDistances();
-
-        // env.printPheromones();
-
-        // System.out.println("test greedy tour construction");
-        // Ant testAnt = new Ant(env);
-        // testAnt.constructGreedyTour(0);
-
-        //AntColonySystem acs = new AntColonySystem(env, cities, 100);
-        //acs.optimize();
-
         Environment env = new Environment(cities.size(), 50, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
-        // System.out.println("before:" );
-        // env.printDistances();
-        // env.calculateDistances(cities);
 
-        // System.out.println("after: ");
-        // env.printDistances();
+        // AntColonySystem acs = new AntColonySystem(env, cities, 100);
+        // acs.optimize();
 
-        // System.out.println("test greedy tour construction");
-        // Ant testAnt = new Ant(1, env);
-
-        // double tauNot = testAnt.calculateInitialPhermone();
-        // //double greedyTourLength = testAnt.constructGreedyTour(0);
-
-        // //double tauNot = 1.0 / (greedyTourLength * cities.size());
-        // env.setInitialPheromones(tauNot);
-
-        // System.out.println("test ant making a tour");
-        // Ant test2 = new Ant(2, env);
-        // test2.makeProbTour();
-
-        AntColonySystem acs = new AntColonySystem(env, cities, 100);
-        acs.optimize();
-
-        //double bestDistance = best.setTour(bestTour);
-        //System.out.println("best distance "  + bestDistance);
+        ElitistAntSystem eas = new ElitistAntSystem(env, cities, 100);
+        eas.optimize();
     }
 }

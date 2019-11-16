@@ -81,19 +81,25 @@ public class Environment {
 		}
 	}
 
+	public void setElitismFactor() {
+		this.elitistNum = this.numAnts;
+	}
+
 	public void antColonySystemGlobalUpdate(Ant bestAnt) {
 		int[] tour = bestAnt.getTour();
 		for (int i = 0; i < tour.length - 1; i++) {
-			if (bestAnt.containsCities(i, i+1)) {
-				this.pheromones[i][i+1] = (1.0 - this.rho) * this.pheromones[i][i+1] + this.rho * (1.0 /this.numCities);
-				this.pheromones[i+1][i] = (1.0 - this.rho) * this.pheromones[i+1][i] + this.rho * (1.0 /this.numCities);
+			int city1 = tour[i];
+			int city2 = tour[i+1];
+			if (bestAnt.containsCities(city1, city2)) {
+				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + this.rho * (1.0 /this.numCities);
+				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + this.rho * (1.0 /this.numCities);
 			}
 		}
 
 	}
 
 	public void antColonySystemLocalUpdate(int city1, int city2) {
-		
+
 		this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2] + this.epsilon * this.tau;
 		this.pheromones[city2][city1] = (1.0 - this.epsilon) * this.pheromones[city2][city1] + this.epsilon * this.tau;
 
@@ -109,15 +115,22 @@ public class Environment {
 		return total;
 	}
 
-	public void elitistPheromoneUpdate(int city1, int city2, int numAnts, Ant ant) {
-		
-		if (bestSoFar.containsCities(city1, city2)) {
-			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
-			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
-		} else {
-			this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2);
-			this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2);
+	public void elitistPheromoneUpdate(Ant bestAnt) {
 
+		int[] tour = bestAnt.getTour();
+
+		for (int i = 0; i < tour.length - 1; i++) {
+			int city1 = tour[i];
+			int city2 = tour[i+1];
+			if (bestAnt.containsCities(city1, city2)) {
+				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
+				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
+
+			} else {
+				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2);
+				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2);
+
+			}
 		}
 	}
 
