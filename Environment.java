@@ -104,7 +104,7 @@ public class Environment {
 				double newPheromoneContent = this.pheromones[i][j] * (1.0 - this.rho);
 
 				if(tourString.contains(edge) || tourString.contains(edgeReverse)) {
-					newPheromoneContent += pheromoneBoost;
+					newPheromoneContent += pheromoneBoost * (this.rho);
 				}
 
 				this.pheromones[i][j] = newPheromoneContent;
