@@ -58,10 +58,10 @@ public class Main {
 
         Environment env = new Environment(cities.size(), 50, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
 
-        // AntColonySystem acs = new AntColonySystem(env, cities, 100);
-        // acs.optimize();
+        AntColonySystem acs = new AntColonySystem(env, cities, 100);
+        acs.optimize();
 
         ElitistAntSystem eas = new ElitistAntSystem(env, cities, 100);
-        eas.optimize();
+        //eas.optimize();
     }
 }

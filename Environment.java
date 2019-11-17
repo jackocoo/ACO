@@ -81,10 +81,43 @@ public class Environment {
 		}
 	}
 
+	public void antColonySystemGlobalUpdate(Ant bestAnt) {
+
+		String tourString = "";
+		int[] tour = bestAnt.getTour();
+
+		for (int i = 0; i < tour.length; i++) {
+			tourString += Integer.toString(tour[i]);
+		}
+		tourString += tour[0];
+
+		double pheromoneBoost = 1.0 / bestAnt.getTotalCost();
+
+		for(int i = 0; i < numCities; i++) {
+			for (int j = i; j < numCities; j++) {
+
+				String edge = Integer.toString(i);
+				edge += Integer.toString(j);
+				String edgeReverse = Integer.toString(j);
+				edgeReverse += Integer.toString(i);
+
+				double newPheromoneContent = this.pheromones[i][j] * (1.0 - this.rho);
+
+				if(tourString.contains(edge) || tourString.contains(edgeReverse)) {
+					newPheromoneContent += pheromoneBoost;
+				}
+
+				this.pheromones[i][j] = newPheromoneContent;
+				this.pheromones[j][i] = newPheromoneContent;
+			}
+		}
+	}
+
 	public void setElitismFactor() {
 		this.elitistNum = this.numAnts;
 	}
 
+/*
 	public void antColonySystemGlobalUpdate(Ant bestAnt) {
 		int[] tour = bestAnt.getTour();
 		for (int i = 0; i < tour.length - 1; i++) {
@@ -97,6 +130,8 @@ public class Environment {
 		}
 
 	}
+
+*/
 
 	public void antColonySystemLocalUpdate(int city1, int city2) {
 

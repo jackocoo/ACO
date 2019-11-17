@@ -66,6 +66,7 @@ public class Ant {
             greedyTour.add(bestCitySoFar);
             visited.add(bestCitySoFar);
         }
+        this.totalCost = tourLength;
         return tourLength;
     }
 
@@ -96,6 +97,7 @@ public class Ant {
             totalLength += distance;
         }   
         System.out.println(totalLength);
+        this.totalCost = totalLength;
         return totalLength;
     }
 
@@ -141,6 +143,7 @@ public class Ant {
         tourLength += this.world.getDistance(currentCityId, startingCity);
         //this.printTour();
 
+        this.totalCost = tourLength;
         return tourLength;
     }
 
@@ -151,7 +154,6 @@ public class Ant {
 
     }
 
-
     public Ant cloneAnt() {
         Ant newAnt = new Ant(this.id, this.world);
         newAnt.setTour(this.tour);
@@ -160,6 +162,10 @@ public class Ant {
 
     public int[] getTour() {
         return this.tour;
+    }
+
+    public double getTotalCost() {
+        return this.totalCost;
     }
 
     public void printTour() {
