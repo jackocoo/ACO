@@ -30,6 +30,7 @@ public class AntColonySystem {
         
         int i = 0;
         Ant bestAnt = antList.get(0);
+        double bestScore = Double.POSITIVE_INFINITY;
         double bestSoFar = bestAnt.makeProbTour();
         System.out.println("this is the best tour" + bestSoFar);
         while (i < this.numIterations) {
@@ -56,6 +57,11 @@ public class AntColonySystem {
             }
             //this.env.antColonySystemGlobalUpdate(bestAnt);
             this.env.antColonySystemGlobalUpdate(iterBest);
+
+            if(iterBestScore < bestScore) {
+                bestScore = iterBestScore;
+                bestAnt = iterBest.cloneAnt();
+            }
 
             System.out.println("************** COMPLETED the " + i + "iteration");
             i++;

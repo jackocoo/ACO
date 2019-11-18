@@ -13,7 +13,7 @@ public class Main {
         int dimension = 0;
         String edgeWeightType = "";
         List<City> cities = new ArrayList<City>();
-        String filename = "a280.tsp";
+        String filename = "fnl4461.tsp";
 
         try {
             File initialFile = new File(filename);
@@ -32,7 +32,7 @@ public class Main {
                     if (data.contains("EDGE_WEIGHT_TYPE")) {
                         edgeWeightType = data.split(" ")[1];
                     } else if (data.contains("DIMENSION")) {
-                        dimension = Integer.parseInt(data.split(" ")[1]);
+                        dimension = Integer.parseInt(data.replace(" ", "").split(":")[1]);
                     } else if (data.contains("NODE_COORD_SECTION")) {
                         first = false;
                     }
@@ -56,7 +56,7 @@ public class Main {
             System.out.println("IO Exception");
         }
 
-        Environment env = new Environment(cities.size(), 50, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
+        Environment env = new Environment(cities.size(), 30, 1, 3, 0.1, 0.1, 0.1, 0.1, 0.9);
 
         AntColonySystem acs = new AntColonySystem(env, cities, 100);
         acs.optimize();

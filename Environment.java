@@ -14,6 +14,7 @@ public class Environment {
 
 	private double[][] distances;
 	private double[][] pheromones;
+	private double[][] iterationPheromones;
 	private Ant bestSoFar;
 	private int numCities;
 	private int numAnts;
@@ -37,6 +38,7 @@ public class Environment {
 		this.numCities = numCities;
 		this.distances = new double[numCities][numCities];
 		this.pheromones = new double[numCities][numCities];
+		this.iterationPheromones = new double[1][1];
 		this.alpha = alpha;
 		this.beta = beta;
 		this.rho = rho;
@@ -113,25 +115,47 @@ public class Environment {
 		}
 	}
 
+
+	public void elitistGlobalPheromoneUpdate(Ant bestAnt) {
+
+		String tourString = "";
+		int[] tour = bestAnt.getTour();
+
+		for (int i = 0; i < tour.length; i++) {
+			tourString += Integer.toString(tour[i]);
+		}
+		tourString += tour[0];
+
+		double pheromoneBoost = 1.0 / bestAnt.getTotalCost();
+
+		for(int i = 0; i < numCities; i++) {
+			for (int j = i; j < numCities; j++) {
+
+				String edge = Integer.toString(i);
+				edge += Integer.toString(j);
+				String edgeReverse = Integer.toString(j);
+				edgeReverse += Integer.toString(i);
+
+				double evaporatedPheromones = this.pheromones[i][j] * (1.0 - this.rho);
+				double newPheromoneAdditions = this.iterationPheromones[i][j];
+				this.iterationPheromones[i][j] = 0.0;
+				this.iterationPheromones[j][i] = 0.0;
+
+				if(tourString.contains(edge) || tourString.contains(edgeReverse)) {
+					newPheromoneAdditions += pheromoneBoost * (this.elitistNum);
+				}
+
+
+				this.pheromones[i][j] = evaporatedPheromones + newPheromoneAdditions;
+				this.pheromones[j][i] = evaporatedPheromones + newPheromoneAdditions;
+			}
+		}
+	}
+
 	public void setElitismFactor() {
 		this.elitistNum = this.numAnts;
 	}
 
-/*
-	public void antColonySystemGlobalUpdate(Ant bestAnt) {
-		int[] tour = bestAnt.getTour();
-		for (int i = 0; i < tour.length - 1; i++) {
-			int city1 = tour[i];
-			int city2 = tour[i+1];
-			if (bestAnt.containsCities(city1, city2)) {
-				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + this.rho * (1.0 /this.numCities);
-				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + this.rho * (1.0 /this.numCities);
-			}
-		}
-
-	}
-
-*/
 
 	public void antColonySystemLocalUpdate(int city1, int city2) {
 
@@ -139,6 +163,7 @@ public class Environment {
 		this.pheromones[city2][city1] = (1.0 - this.epsilon) * this.pheromones[city2][city1] + this.epsilon * this.tau;
 
 	}
+
 
 	public double calculateTotal(int city1, int city2) {
 		double total = 0;
@@ -149,6 +174,24 @@ public class Environment {
 		}
 		return total;
 	}
+
+
+	public void addIterationPheromonesElitist(int[] tour, double tourLength) {
+
+		double pheromoneAddition = 1.0 / tourLength;
+		for(int i = 0; i < tour.length - 1; i ++ ){
+			int city1 = tour[i];
+			int city2 = tour[i + 1];
+			this.iterationPheromones[city1][city2] = pheromoneAddition;
+			this.iterationPheromones[city2][city1] = pheromoneAddition;
+		}
+		int city1 = tour[tour.length - 1];
+		int city2 = tour[0];
+		this.iterationPheromones[city1][city2] = pheromoneAddition;
+		this.iterationPheromones[city2][city1] = pheromoneAddition;
+	}
+
+/*
 
 	public void elitistPheromoneUpdate(Ant bestAnt) {
 
@@ -168,6 +211,8 @@ public class Environment {
 			}
 		}
 	}
+	*/
+
 
 	public double getDistance(int city1, int city2) {
 		return this.distances[city1][city2];
@@ -285,7 +330,7 @@ public class Environment {
 		this.tau = pheromoneContent;
 		for (int i = 0; i < this.numCities; i++) {
 			for (int j = 0; j < this.numCities; j++) {
-				this.pheromones[i][j] = 1 * pheromoneContent;
+				this.pheromones[i][j] = 1.0 * pheromoneContent;
 			}
 		}
 	}
