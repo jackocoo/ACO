@@ -6,7 +6,7 @@ public class ElitistAntSystem {
     private Environment env;
 
     private List<City> cityList = new ArrayList<City>();
-    
+
     private int numIterations;
 
     public ElitistAntSystem(Environment env, List<City> cityList, int numIterations) {
@@ -28,7 +28,7 @@ public class ElitistAntSystem {
         System.out.println(antList);
         System.out.println(antList.get(0).makeProbTour());
         List<Ant> bestAntsList = new ArrayList<Ant>();
-        
+
         int i = 0;
         Ant bestAnt = antList.get(0);
         double bestSoFar = bestAnt.makeElitistProbTour();
@@ -43,7 +43,7 @@ public class ElitistAntSystem {
                     // System.out.println("the bestsofar" + bestSoFar);
                     bestAnt = antList.get(j).cloneAnt();
                 }
-                System.out.println("            best has a score of " + bestSoFar + "\n");              
+                System.out.println("            best has a score of " + bestSoFar + "\n");
             }
             bestAntsList.add(bestAnt);
             int listSize = bestAntsList.size();

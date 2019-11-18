@@ -2,12 +2,10 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 
-
-
 import java.lang.Math;
 import java.util.List;
 import java.util.ArrayList;
-import java.math.BigDecimal; 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Environment {
@@ -15,24 +13,23 @@ public class Environment {
 	private double[][] distances;
 	private double[][] pheromones;
 	private double[][] iterationPheromones;
-	private Ant bestSoFar;
 	private int numCities;
 	private int numAnts;
 
 	public double alpha;
 	public double beta;
-	public double rho; //evaporation rate 
+	public double rho; // evaporation rate
 	public double elitistNum;
-	public double epsilon; //decaying coefficient
-	public double tau; //1 / length of greedy tour * num cities
-	public double q; //prob for choosing to use greedy or prob
+	public double epsilon; // decaying coefficient
+	public double tau; // 1 / length of greedy tour * num cities
+	public double q; // prob for choosing to use greedy or prob
 
 	public Random rand = new Random();
 
 	public List<Ant> antList = new ArrayList<Ant>();
 
-	public Environment(int numCities, int numAnts, double alpha, double beta, double rho, double elitistNum, 
-						double epsilon, double tau, double q ) {
+	public Environment(int numCities, int numAnts, double alpha, double beta, double rho, double elitistNum,
+			double epsilon, double tau, double q) {
 
 		this.numAnts = numAnts;
 		this.numCities = numCities;
@@ -59,7 +56,7 @@ public class Environment {
 
 	public void calculateDistances(List<City> cityList) {
 
-		for(int i = 0; i < cityList.size(); i++) {
+		for (int i = 0; i < cityList.size(); i++) {
 			City currentCity = cityList.get(i);
 			double currentX = currentCity.getXCoord();
 			double currentY = currentCity.getYCoord();
@@ -70,7 +67,7 @@ public class Environment {
 				double comparingY = comparingCity.getYCoord();
 
 				double distance = 0.0;
-				if(j != i) {
+				if (j != i) {
 					double xDiffSquared = Math.pow(currentX - comparingX, 2);
 					double yDiffSquared = Math.pow(currentY - comparingY, 2);
 					double sum = xDiffSquared + yDiffSquared;
@@ -95,7 +92,7 @@ public class Environment {
 
 		double pheromoneBoost = 1.0 / bestAnt.getTotalCost();
 
-		for(int i = 0; i < numCities; i++) {
+		for (int i = 0; i < numCities; i++) {
 			for (int j = i; j < numCities; j++) {
 
 				String edge = Integer.toString(i);
@@ -105,7 +102,7 @@ public class Environment {
 
 				double newPheromoneContent = this.pheromones[i][j] * (1.0 - this.rho);
 
-				if(tourString.contains(edge) || tourString.contains(edgeReverse)) {
+				if (tourString.contains(edge) || tourString.contains(edgeReverse)) {
 					newPheromoneContent += pheromoneBoost * (this.rho);
 				}
 
@@ -114,7 +111,6 @@ public class Environment {
 			}
 		}
 	}
-
 
 	public void elitistGlobalPheromoneUpdate(Ant bestAnt) {
 
@@ -128,7 +124,7 @@ public class Environment {
 
 		double pheromoneBoost = 1.0 / bestAnt.getTotalCost();
 
-		for(int i = 0; i < numCities; i++) {
+		for (int i = 0; i < numCities; i++) {
 			for (int j = i; j < numCities; j++) {
 
 				String edge = Integer.toString(i);
@@ -141,10 +137,9 @@ public class Environment {
 				this.iterationPheromones[i][j] = 0.0;
 				this.iterationPheromones[j][i] = 0.0;
 
-				if(tourString.contains(edge) || tourString.contains(edgeReverse)) {
+				if (tourString.contains(edge) || tourString.contains(edgeReverse)) {
 					newPheromoneAdditions += pheromoneBoost * (this.elitistNum);
 				}
-
 
 				this.pheromones[i][j] = evaporatedPheromones + newPheromoneAdditions;
 				this.pheromones[j][i] = evaporatedPheromones + newPheromoneAdditions;
@@ -156,7 +151,6 @@ public class Environment {
 		this.elitistNum = this.numAnts;
 	}
 
-
 	public void antColonySystemLocalUpdate(int city1, int city2) {
 
 		this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2] + this.epsilon * this.tau;
@@ -164,22 +158,20 @@ public class Environment {
 
 	}
 
-
 	public double calculateTotal(int city1, int city2) {
 		double total = 0;
 		for (Ant ant : antList) {
 			if (ant.containsCities(city1, city2)) {
-				total += (1.0/this.numCities);
+				total += (1.0 / this.numCities);
 			}
 		}
 		return total;
 	}
 
-
 	public void addIterationPheromonesElitist(int[] tour, double tourLength) {
 
 		double pheromoneAddition = 1.0 / tourLength;
-		for(int i = 0; i < tour.length - 1; i ++ ){
+		for (int i = 0; i < tour.length - 1; i++) {
 			int city1 = tour[i];
 			int city2 = tour[i + 1];
 			this.iterationPheromones[city1][city2] = pheromoneAddition;
@@ -190,29 +182,6 @@ public class Environment {
 		this.iterationPheromones[city1][city2] = pheromoneAddition;
 		this.iterationPheromones[city2][city1] = pheromoneAddition;
 	}
-
-/*
-
-	public void elitistPheromoneUpdate(Ant bestAnt) {
-
-		int[] tour = bestAnt.getTour();
-
-		for (int i = 0; i < tour.length - 1; i++) {
-			int city1 = tour[i];
-			int city2 = tour[i+1];
-			if (bestAnt.containsCities(city1, city2)) {
-				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
-				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2) + this.elitistNum * (1.0 /this.numCities);
-
-			} else {
-				this.pheromones[city1][city2] = (1.0 - this.rho) * this.pheromones[city1][city2] + calculateTotal(city1, city2);
-				this.pheromones[city2][city1] = (1.0 - this.rho) * this.pheromones[city2][city1] + calculateTotal(city1, city2);
-
-			}
-		}
-	}
-	*/
-
 
 	public double getDistance(int city1, int city2) {
 		return this.distances[city1][city2];
@@ -232,7 +201,7 @@ public class Environment {
 		double bestProductSoFar = 0.0;
 		int bestCitySoFar = 0;
 
-		for(int i = 0; i < neighboringCities.length; i++) {
+		for (int i = 0; i < neighboringCities.length; i++) {
 
 			double product = 0.0;
 
@@ -241,7 +210,7 @@ public class Environment {
 				double pheromoneContent = neighoringPheromones[i];
 				product = pheromoneContent * Math.pow(cityDistance, this.beta);
 
-				if(product > bestProductSoFar) {
+				if (product > bestProductSoFar) {
 					bestProductSoFar = product;
 					bestCitySoFar = i;
 				}
@@ -249,7 +218,6 @@ public class Environment {
 		}
 		return bestCitySoFar;
 	}
-
 
 	public int getNextCityProb(int cityId, Set<Integer> visitedSet) {
 
@@ -259,7 +227,7 @@ public class Environment {
 
 		double runningProbSum = 0.0;
 
-		for(int i = 0; i < neighboringCities.length; i++) {
+		for (int i = 0; i < neighboringCities.length; i++) {
 
 			double product = 0.0;
 
@@ -281,7 +249,6 @@ public class Environment {
 		return pickCityFromProbabilities(probabilities);
 	}
 
-
 	public static int pickCityFromProbabilities(double[] probabilities) {
 
 		Random randy = new Random();
@@ -289,7 +256,7 @@ public class Environment {
 
 		int counter = 0;
 
-		while(probabilities[counter] < randDouble) {
+		while (probabilities[counter] < randDouble) {
 			counter++;
 		}
 		return counter;
@@ -298,7 +265,7 @@ public class Environment {
 	public void setAntList() {
 		int i = 0;
 		Ant ant;
-		while(i < this.numAnts) {
+		while (i < this.numAnts) {
 			ant = new Ant(i, this);
 			antList.add(ant);
 			i++;
@@ -309,13 +276,13 @@ public class Environment {
 		return this.antList;
 	}
 
-
 	public static double round(double value, int places) {
-    	if (places < 0) throw new IllegalArgumentException();
+		if (places < 0)
+			throw new IllegalArgumentException();
 
-    	BigDecimal bd = BigDecimal.valueOf(value);
-    	bd = bd.setScale(places, RoundingMode.HALF_UP);
-    	return bd.doubleValue();
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 	public double[][] getDistanceMatrix() {
@@ -337,10 +304,10 @@ public class Environment {
 
 	public void printDistances() {
 
-		for(int i = 0; i < this.distances.length; i++) {
+		for (int i = 0; i < this.distances.length; i++) {
 			String line = "";
 
-			for(int j = 0; j < this.distances.length; j++) {
+			for (int j = 0; j < this.distances.length; j++) {
 				line += " " + round(this.distances[i][j], 1);
 			}
 
@@ -349,10 +316,10 @@ public class Environment {
 	}
 
 	public void printPheromones() {
-		for(int i = 0; i < this.pheromones.length; i++) {
+		for (int i = 0; i < this.pheromones.length; i++) {
 			String line = "";
 
-			for(int j = 0; j < this.pheromones.length; j++) {
+			for (int j = 0; j < this.pheromones.length; j++) {
 				line += " " + round(this.pheromones[i][j], 1);
 			}
 

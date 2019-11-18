@@ -1,5 +1,5 @@
 public class City {
-    
+
     private int id;
 
     private double xCoord;
@@ -17,11 +17,11 @@ public class City {
         return cityRep;
     }
 
-    public double getXCoord(){
+    public double getXCoord() {
         return this.xCoord;
     }
 
-    public double getYCoord(){
+    public double getYCoord() {
         return this.yCoord;
     }
 

@@ -21,7 +21,6 @@ public class Ant {
 
     private int id;
 
-
     public Ant(int id, Environment world) {
         this.id = id;
         this.world = world;
@@ -44,7 +43,7 @@ public class Ant {
         System.out.println(numCities);
 
         double tourLength = 0.0;
-        
+
         Set<Integer> visited = new HashSet<Integer>();
         visited.add(startingCity);
 
@@ -74,7 +73,7 @@ public class Ant {
         double answer = 1.0 / this.constructGreedyTour(0) * this.world.getNumCities();
         return answer;
     }
-   
+
     public Environment getEnvironment() {
         return this.world;
     }
@@ -83,17 +82,17 @@ public class Ant {
         this.tour = newTour.clone();
 
         double totalLength = 0;
-        for(int i = 0; i < this.tour.length; i++) {
-            
+        for (int i = 0; i < this.tour.length; i++) {
+
             int next;
-            if(i == this.tour.length - 1){
+            if (i == this.tour.length - 1) {
                 next = 0;
             } else {
                 next = i + 1;
             }
             double distance = this.world.getDistance(this.tour[i], this.tour[next]);
             totalLength += distance;
-        }   
+        }
         this.totalCost = totalLength;
         return totalLength;
     }
@@ -115,12 +114,12 @@ public class Ant {
         tourCounter++;
 
         int currentCityId = startingCity;
-        while(visitedCities.size() < worldSize) {
+        while (visitedCities.size() < worldSize) {
 
             double randDouble = rand.nextDouble();
             int nextCityId = startingCity;
 
-            if(randDouble < q) {
+            if (randDouble < q) {
                 nextCityId = this.world.getNextCityGreedy(currentCityId, visitedCities);
             } else {
                 nextCityId = this.world.getNextCityProb(currentCityId, visitedCities);
@@ -133,17 +132,16 @@ public class Ant {
             tourLength += this.world.getDistance(currentCityId, nextCityId);
             tourCounter++;
             currentCityId = nextCityId;
-            //this.printTour();
-            
+            // this.printTour();
+
         }
 
         tourLength += this.world.getDistance(currentCityId, startingCity);
-        //this.printTour();
+        // this.printTour();
 
         this.totalCost = tourLength;
         return tourLength;
     }
-
 
     public double makeElitistProbTour() {
 
@@ -162,7 +160,7 @@ public class Ant {
         tourCounter++;
 
         int currentCityId = startingCity;
-        while(visitedCities.size() < worldSize) {
+        while (visitedCities.size() < worldSize) {
 
             double randDouble = rand.nextDouble();
             int nextCityId = startingCity;
@@ -174,16 +172,15 @@ public class Ant {
             tourLength += this.world.getDistance(currentCityId, nextCityId);
             tourCounter++;
             currentCityId = nextCityId;
-            //this.printTour();
+            // this.printTour();
         }
 
         tourLength += this.world.getDistance(currentCityId, startingCity);
-        //this.printTour();
+        // this.printTour();
 
         this.totalCost = tourLength;
         return tourLength;
     }
-
 
     public String toString() {
         String rep = "";
@@ -210,7 +207,7 @@ public class Ant {
 
         String output = "[";
 
-        for(int i = 0; i < this.tour.length; i++) {
+        for (int i = 0; i < this.tour.length; i++) {
             output += " " + this.tour[i] + ",";
         }
         output += "] ! ";
