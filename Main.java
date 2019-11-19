@@ -13,7 +13,7 @@ public class Main {
         int dimension = 0;
         String edgeWeightType = "";
         List<City> cities = new ArrayList<City>();
-        String filename = "fnl4461.tsp";
+        String filename = "d2103.tsp";
 
         try {
             File initialFile = new File(filename);
