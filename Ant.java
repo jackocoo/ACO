@@ -7,79 +7,45 @@ import java.util.Set;
 
 public class Ant {
 
-    /**
-     * An integer array representing the tour that the ant performed on a given iteration.
-     */
     private int[] tour;
-
     private double totalCost;
-
-    /**
-     * Instance of the Environment object that an Ant will be operating in.
-     */
     private Environment world;
-
-    /**
-     * The number of cities in the TSP problem.
-     */
     private int numCities;
-
-    /**
-     * The greedily constructed tour. Used to calculate tauNot.
-     */
     private List<Integer> greedyTour = new ArrayList<Integer>();
-
-    /**
-     * Instance of a random generator object.
-     */
     private Random rand = new Random();
-
-    /**
-     * The unique id given to each ant
-     */
     private int id;
 
     /**
      * Ant object. Operates within an Environment object.
-     * @param id The id of the given ant. Ranges from 0, 1, ... , m (where m represents the number of ants).
-     * @param world The instance of an Environment object that an ant will be interacting with.
+     * 
+     * @param id    The id of the given ant. Ranges from 0, 1, ... , m (where m
+     *              represents the number of ants).
+     * @param world The instance of an Environment object that an ant will be
+     *              interacting with.
      */
     public Ant(int id, Environment world) {
         this.id = id;
         this.world = world;
-        this.numCities = world.getEnvironmentSize();
+        this.numCities = world.getNumCities();
         this.totalCost = Double.POSITIVE_INFINITY;
         this.tour = new int[this.numCities];
     }
 
     /**
-     * Method for checking if two cities are contained within a given ant's tour.
-     * @param city1 Integer representing city1's id.
-     * @param city2 Integer representing city2's id.
-     * @return Boolean true if either city1 or city2 is within a given ant's tour. 
-     */
-    public boolean containsCities(int city1, int city2) {
-        boolean answer = false;
-        if (Arrays.asList(tour).contains(city1) && Arrays.asList(tour).contains(city2)) {
-            answer = true;
-        }
-        return answer;
-    }
-
-    /**
-     * Method to construct a greedy tour where an ant starts at 0. This is used to calculate tauNot, which
-     * is what pheromones are initialized to when we begin either our ACS or Elitist algorithm. A greedy tour
-     * is constructed when an ant chooses the node closest the current node it is at and adds it to the tour 
-     * if it has not yet been visited.
-     * @param startingCity  Integer representing the starting location of the ant when it begins constructing
-     *                      a greedy tour.
-     * @return The total length of the greedy tour that the ant has constructed from the given starting city
-     *         (which in our case we choose to be 0).
+     * Method to construct a greedy tour where an ant starts at 0. This is used to
+     * calculate tauNot, which is what pheromones are initialized to when we begin
+     * either our ACS or Elitist algorithm. A greedy tour is constructed when an ant
+     * chooses the node closest the current node it is at and adds it to the tour if
+     * it has not yet been visited.
+     * 
+     * @param startingCity Integer representing the starting location of the ant
+     *                     when it begins constructing a greedy tour.
+     * @return The total length of the greedy tour that the ant has constructed from
+     *         the given starting city (which in our case we choose to be 0).
      */
     public double constructGreedyTour(int startingCity) {
         double[][] distances = this.world.getDistanceMatrix().clone();
         int numCities = this.world.getNumCities();
-        System.out.println(numCities);
 
         double tourLength = 0.0;
 
@@ -109,55 +75,26 @@ public class Ant {
     }
 
     /**
-     * Method for calculating the value that we are going to the pheromones on all edges equal to.
-     * @return tauNot, which is the number that we want to set all pheromones to initially.
+     * Method for calculating the value that we are going to the pheromones on all
+     * edges equal to.
+     * 
+     * @return tauNot, which is the number that we want to set all pheromones to
+     *         initially.
      */
     public double calculateInitialPhermone() {
         double answer = 1.0 / this.constructGreedyTour(0) * this.world.getNumCities();
         return answer;
     }
 
-    /**
-     * Getter to return the environment of a particular ant.
-     * @return An ant's own Environment object.
-     */
-    public Environment getEnvironment() {
-        return this.world;
-    }
 
     /**
-     * For a given ant, this method sets an ant's current tour instance to a new tour instance. Used when
-     * we clone an ant. Also, returns the total cost of this newTour that the ant's tour instance has been
-     * set to.
-     * @param int[] The newTour that we want to set the ant's tour instance to.
-     * @return The total cost of the given ant's new tour instance.
-     */
-    public double setTour(int[] newTour) {
-        this.tour = newTour.clone();
-
-        double totalLength = 0;
-        for (int i = 0; i < this.tour.length; i++) {
-
-            int next;
-            // Handles connecting final node in list back to first node in list
-            if (i == this.tour.length - 1) {
-                next = 0;
-            } else {
-                next = i + 1;
-            }
-            double distance = this.world.getDistance(this.tour[i], this.tour[next]);
-            totalLength += distance;
-        }
-        this.totalCost = totalLength;
-        return totalLength;
-    }
-
-    /**
-     * Method used to make a tour in the ACS algorithm using the psuedorandom probability
-     * rule. Probabilistically picks next city to add to the tour with the
-     * greedyTourConstruction method with probability q. Otherwise, the more computationally exprensive
-     * method that chooses the next city probabilistically (getNextCityProb). Updates the tour for the given
-     * ant and returns the cost of the tours.
+     * Method used to make a tour in the ACS algorithm using the psuedorandom
+     * probability rule. Probabilistically picks next city to add to the tour with
+     * the greedyTourConstruction method with probability q. Otherwise, the more
+     * computationally exprensive method that chooses the next city
+     * probabilistically (getNextCityProb). Updates the tour for the given ant and
+     * returns the cost of the tours.
+     * 
      * @return The cost of the tour after it has been created.
      */
     public double makeACSProbTour() {
@@ -165,8 +102,8 @@ public class Ant {
         Set<Integer> visitedCities = new HashSet<Integer>();
         Arrays.fill(this.tour, 0);
 
-        int worldSize = this.world.getEnvironmentSize();
-        double q = this.world.getQ();
+        int worldSize = this.world.getNumCities();
+        double q = this.world.getProbabilityPicker();
         int tourCounter = 0;
         double tourLength = 0;
 
@@ -188,7 +125,7 @@ public class Ant {
                 nextCityId = this.world.getNextCityProb(currentCityId, visitedCities);
             }
 
-            // perform the wearing away on the added edge while constructing the tour
+            // perform the wearing away on the added edge while constructing the tour (local update)
             this.world.antColonySystemLocalUpdate(currentCityId, nextCityId);
 
             tour[tourCounter] = nextCityId;
@@ -206,9 +143,10 @@ public class Ant {
     }
 
     /**
-     * Method used to make a tour in the Elitist Ant System algorithm. Unlike ACS, which uses
-     * a different rule part of the time, ACS uses the getNextCityProb all the time to choose which
-     * edges to include in the tour.
+     * Method used to make a tour in the Elitist Ant System algorithm. Unlike ACS,
+     * which uses a different rule part of the time, ACS uses the getNextCityProb
+     * all the time to choose which edges to include in the tour.
+     * 
      * @return The cost of the tour after it has been created.
      */
     public double makeElitistProbTour() {
@@ -216,8 +154,8 @@ public class Ant {
         Set<Integer> visitedCities = new HashSet<Integer>();
         Arrays.fill(this.tour, 0);
 
-        int worldSize = this.world.getEnvironmentSize();
-        double q = this.world.getQ();
+        int worldSize = this.world.getNumCities();
+        double q = this.world.getProbabilityPicker();
         int tourCounter = 0;
         double tourLength = 0;
 
@@ -249,6 +187,7 @@ public class Ant {
 
     /**
      * String representation of an Ant, which is just its id number.
+     * 
      * @return The string representation of an Ant.
      */
     public String toString() {
@@ -259,7 +198,36 @@ public class Ant {
     }
 
     /**
+     * For a given ant, this method sets an ant's current tour instance to a new
+     * tour instance. Used when we clone an ant. Also, returns the total cost of
+     * this newTour that the ant's tour instance has been set to.
+     * 
+     * @param int[] The newTour that we want to set the ant's tour instance to.
+     * @return The total cost of the given ant's new tour instance.
+     */
+    public double setTour(int[] newTour) {
+        this.tour = newTour.clone();
+
+        double totalLength = 0;
+        for (int i = 0; i < this.tour.length; i++) {
+
+            int next;
+            // Handles connecting final node in list back to first node in list
+            if (i == this.tour.length - 1) {
+                next = 0;
+            } else {
+                next = i + 1;
+            }
+            double distance = this.world.getDistance(this.tour[i], this.tour[next]);
+            totalLength += distance;
+        }
+        this.totalCost = totalLength;
+        return totalLength;
+    }
+
+    /**
      * Copy the current ant object.
+     * 
      * @return New Ant object that is the same at the current ant.
      */
     public Ant cloneAnt() {
@@ -270,6 +238,7 @@ public class Ant {
 
     /**
      * Getter for the Ant's tour.
+     * 
      * @return The Ant's tour.
      */
     public int[] getTour() {
@@ -278,6 +247,7 @@ public class Ant {
 
     /**
      * Getter to return the totalCost of an Ant's tour.
+     * 
      * @return The total cost of the tour.
      */
     public double getTotalCost() {
@@ -296,6 +266,15 @@ public class Ant {
         }
         output += "] ! ";
         System.out.println(output);
+    }
+
+    /**
+     * Getter to return the environment of a particular ant.
+     * 
+     * @return An ant's own Environment object.
+     */
+    public Environment getEnvironment() {
+        return this.world;
     }
 
 }

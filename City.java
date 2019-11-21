@@ -1,22 +1,12 @@
 public class City {
 
-    /**
-     * Integer identification instance of a City object.
-     */
     private int id;
-
-    /**
-     * The xCoordinate of the City.
-     */
     private double xCoord;
-
-    /**
-     * The yCoordinate of the City.
-     */
     private double yCoord;
 
     /**
-     * Constructor for the City object.
+     * Constructor for the City object, which just contains a city id, and xCoord
+     * and yCoord.
      */
     public City(int id, double xCoord, double yCoord) {
         this.id = id;
@@ -26,6 +16,7 @@ public class City {
 
     /**
      * toString method.
+     * 
      * @return String representation of the City.
      */
     public String toString() {
@@ -35,6 +26,7 @@ public class City {
 
     /**
      * xCoord getter.
+     * 
      * @return the xCoord of the City object.
      */
     public double getXCoord() {
@@ -43,6 +35,7 @@ public class City {
 
     /**
      * yCoord getter.
+     * 
      * @return the xCoord of the City object.
      */
     public double getYCoord() {
@@ -51,6 +44,7 @@ public class City {
 
     /**
      * id getter.
+     * 
      * @return the yCoord of the City object.
      */
     public int getCityId() {
