@@ -1,6 +1,12 @@
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ElitistAntSystem runs the elitist ant system version of ant colony optimization
+Environment ent: the environment we are working in
+List<City> cityList: list of cities
+int numIterations: number of iterations to run
+ */
 public class ElitistAntSystem {
 
     private Environment env;
@@ -9,12 +15,20 @@ public class ElitistAntSystem {
 
     private int numIterations;
 
+
+    /**
+    Constructor for the cless with env, cityList, numIterations as params
+    */
     public ElitistAntSystem(Environment env, List<City> cityList, int numIterations) {
         this.env = env;
         this.cityList = cityList;
         this.numIterations = numIterations;
     }
 
+    /**
+    Runs the algorithm to optimize the TSP
+    @return best paths
+    */
     public List<Double> optimize() {
         this.env.setElitismFactor();
         this.env.calculateDistances(cityList);
@@ -26,7 +40,6 @@ public class ElitistAntSystem {
 
         List<Ant> antList = this.env.getAntList();
         System.out.println(antList);
-        System.out.println(antList.get(0).makeProbTour());
         List<Ant> bestAntsList = new ArrayList<Ant>();
         List<Double> bests = new ArrayList<Double>();
 

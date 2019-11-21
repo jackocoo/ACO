@@ -8,6 +8,19 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+
+/**
+Environment represents the space that the ants function within, allowing ant actions
+to affect pheromone levels in the environment, in turn impacting ants' decisions
+Variable descriptions:
+distances: stores the euclidean distances from one city to another using a 2-D array
+pheromones: stores pheromone concentrations on each edge from one city to another using a 2-D array
+iterationPheromones: intermediary pheromone matrix to allow for noting pheromone levels at time t and t+1
+numCities: number of cities in the problem
+numAnts: number of ants to use
+alpha, beta, rho, elitistNum, epsilon, tau, q: parameter values to use for optimization
+antList: used to store all ants in the environment
+ */
 public class Environment {
 
 	private double[][] distances;
@@ -28,6 +41,19 @@ public class Environment {
 
 	public List<Ant> antList = new ArrayList<Ant>();
 
+	/**
+	Constructor for environment
+	@param int numCities number of cities
+	@param int numAnts number of ants
+	@param double alpha parameter value for pheromone levels
+	@param double beta parameter value for heuristic info
+	@param double rho paramater value for pheromone evaporation 
+	@param double elitistNum parameter value for elitist algorithm
+	@param double epsilon paramter value for pheromone degradation
+	@param double tau initial edge weight based on greedy tour
+	@param double q probability of choosing best next node according to best path in ACS
+	 */
+
 	public Environment(int numCities, int numAnts, double alpha, double beta, double rho, double elitistNum,
 			double epsilon, double tau, double q) {
 
@@ -46,13 +72,26 @@ public class Environment {
 
 	}
 
+	/**
+	getter for the number of cities
+	@return int numCities
+	 */
+
 	public int getEnvironmentSize() {
 		return this.numCities;
 	}
 
+	/**
+	getter for the parameter q
+	@return double q
+	 */
 	public double getQ() {
 		return this.q;
 	}
+
+	/**
+	Used to calculate distances between cities and stores into distances matrix
+	 */
 
 	public void calculateDistances(List<City> cityList) {
 
@@ -81,7 +120,10 @@ public class Environment {
 	}
 
 
-
+	/**
+	Used to update pheromones globally within the ACS algorithm
+	Directly updates pheromone matrix
+	 */
 	public void antColonySystemGlobalUpdate(Ant bestAnt) {
 
 		/*
@@ -139,7 +181,10 @@ public class Environment {
 		this.pheromones[city2][city1] = newPheromoneContent;
 	}
 
-
+	/**
+	Global pheromone update for elitist ant system
+	Updates pheromone matrix
+	 */
 
 	public void elitistGlobalPheromoneUpdate(Ant bestAnt) {
 
@@ -180,17 +225,30 @@ public class Environment {
 
 
 
+	/**
+	Used to set elitism factor
+ 	*/
 
 	public void setElitismFactor() {
 		this.elitistNum = this.numAnts;
 	}
 
+	/**
+	A local pheromone update for ACS
+	 */
 	public void antColonySystemLocalUpdate(int city1, int city2) {
 
 		this.pheromones[city1][city2] = (1.0 - this.epsilon) * this.pheromones[city1][city2] + this.epsilon * this.tau;
 		this.pheromones[city2][city1] = (1.0 - this.epsilon) * this.pheromones[city2][city1] + this.epsilon * this.tau;
 
 	}
+
+	/**
+	@param int city1
+	@param int city2
+	calculate frequency of an edge appearing in our population of ants
+	@return double total
+	 */
 
 	public double calculateTotal(int city1, int city2) {
 		double total = 0;
@@ -201,6 +259,10 @@ public class Environment {
 		}
 		return total;
 	}
+
+	/**
+	Updates the Iteration Pheromones matrix for EAS
+	 */
 
 	public void addIterationPheromonesElitist(int[] tour, double tourLength) {
 
@@ -217,16 +279,34 @@ public class Environment {
 		this.iterationPheromones[city2][city1] = pheromoneAddition;
 	}
 
+	/**
+	@param int city1, city2
+	getter for edge distance
+	@return double distance between city1, city2
+	 */
+
 	public double getDistance(int city1, int city2) {
 		return this.distances[city1][city2];
 
 	}
+
+	/**
+	@param int city1, city2
+	getter for pheromone levels on an edge
+	@return double distance between city1, city2
+	 */
 
 	public double getPheromones(int city1, int city2) {
 		return this.pheromones[city1][city2];
 
 	}
 
+	/**
+	@param int cityId
+	@param Set visitedSet
+	Make the greedy choice for the the next city
+	@return int bestCity
+	 */
 	public int getNextCityGreedy(int cityId, Set<Integer> visitedSet) {
 
 		double[] neighboringCities = this.distances[cityId];
@@ -252,6 +332,13 @@ public class Environment {
 		}
 		return bestCitySoFar;
 	}
+
+	/**
+	@param int cityId
+	@param Set visitedSet
+	returns next city according to the calculated probabilities  
+	@return int city
+	 */
 
 	public int getNextCityProb(int cityId, Set<Integer> visitedSet) {
 
@@ -283,6 +370,12 @@ public class Environment {
 		return pickCityFromProbabilities(probabilities);
 	}
 
+	/**
+	@param double proboabilities
+	picks a city probabilistically according to the array input
+	@return int city index
+	 */
+
 	public static int pickCityFromProbabilities(double[] probabilities) {
 
 		Random randy = new Random();
@@ -296,6 +389,10 @@ public class Environment {
 		return counter;
 	}
 
+	/**
+	populates antList with new ants
+	 */
+
 	public void setAntList() {
 		int i = 0;
 		Ant ant;
@@ -306,10 +403,17 @@ public class Environment {
 		}
 	}
 
+	/**
+	getter for the environment's list of ants
+	@return List of ants
+	 */
 	public List<Ant> getAntList() {
 		return this.antList;
 	}
 
+	/**
+	Static method used to round accordingly
+	 */
 	public static double round(double value, int places) {
 		if (places < 0)
 			throw new IllegalArgumentException();
@@ -319,13 +423,28 @@ public class Environment {
 		return bd.doubleValue();
 	}
 
+	/**
+	getter for the distances 2-D array
+	@return 2-D array
+	 */
+
 	public double[][] getDistanceMatrix() {
 		return this.distances;
 	}
 
+	/**
+	getter for number of cities
+	@return int number of cities
+	 */
+
 	public int getNumCities() {
 		return this.numCities;
 	}
+
+	/**
+	@param double pheromone content
+	Used to populate the pheromone matrix initially
+	 */
 
 	public void setInitialPheromones(double pheromoneContent) {
 		this.tau = pheromoneContent;
@@ -336,6 +455,9 @@ public class Environment {
 		}
 	}
 
+	/**
+	Used to print distances
+	 */
 	public void printDistances() {
 
 		for (int i = 0; i < this.distances.length; i++) {
@@ -348,7 +470,9 @@ public class Environment {
 			System.out.println(line);
 		}
 	}
-
+	/**
+	Used to print pheromones
+	 */
 	public void printPheromones() {
 		for (int i = 0; i < this.pheromones.length; i++) {
 			String line = "";
