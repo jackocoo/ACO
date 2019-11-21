@@ -38,13 +38,8 @@ public class AntColonySystem {
             Ant iterBest = antList.get(0);
             double iterBestScore = Double.POSITIVE_INFINITY;
             for (int j = 1; j < antList.size(); j++) {
-<<<<<<< HEAD
                 double tourCost = antList.get(j).makeACSProbTour();
                 System.out.println("tour cost " + tourCost);
-=======
-                double tourCost = antList.get(j).makeProbTour();
-                //System.out.println("tour cost " + tourCost);
->>>>>>> 96bc2f3fc314d51d1082166d76676f2db2e7cd04
                 if (tourCost < bestSoFar) {
                     bestSoFar = tourCost;
                     // System.out.println("the bestsofar" + bestSoFar);
