@@ -80,7 +80,11 @@ public class Environment {
 		}
 	}
 
+
+
 	public void antColonySystemGlobalUpdate(Ant bestAnt) {
+
+		/*
 
 		String tourString = "";
 		int[] tour = bestAnt.getTour();
@@ -110,7 +114,32 @@ public class Environment {
 				this.pheromones[j][i] = newPheromoneContent;
 			}
 		}
+
+		*/
+
+		int[] tour = bestAnt.getTour();
+
+		double pheromoneBoost = 1.0 / bestAnt.getTotalCost();
+
+		for(int i = 0; i < tour.length - 1; i++) {
+			int city1 = tour[i];
+			int city2 = tour[i+1];
+
+			double pheromonesCurrent = this.pheromones[city1][city2];
+			double newPheromoneContent = (1.0 - this.rho) * pheromonesCurrent + pheromoneBoost * this.rho;
+			this.pheromones[city1][city2] = newPheromoneContent;
+			this.pheromones[city2][city1] = newPheromoneContent;
+		}
+
+		int city1 = tour[tour.length - 1];
+		int city2 = tour[0];
+		double pheromonesCurrent = this.pheromones[city1][city2];
+		double newPheromoneContent = (1.0 - this.rho) * pheromonesCurrent + pheromoneBoost * this.rho;
+		this.pheromones[city1][city2] = newPheromoneContent;
+		this.pheromones[city2][city1] = newPheromoneContent;
 	}
+
+
 
 	public void elitistGlobalPheromoneUpdate(Ant bestAnt) {
 
@@ -145,7 +174,12 @@ public class Environment {
 				this.pheromones[j][i] = evaporatedPheromones + newPheromoneAdditions;
 			}
 		}
+
+
 	}
+
+
+
 
 	public void setElitismFactor() {
 		this.elitistNum = this.numAnts;
