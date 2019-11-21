@@ -58,6 +58,7 @@ public class TestingSuite {
 			bests = acs.optimize();
 			acsList.add(bests);
 		}
+		
 
 		for(int i = 0; i < testNumLots; i++) {
 			List<Double> bests = new ArrayList<Double>();
@@ -202,6 +203,60 @@ public class TestingSuite {
 	}
 
 
+	//tests for 4 different values of rho that are not 0.1 for both ACS and EAS
+	public void runEvaporationChanges() {
+		System.out.println("Running tests for changes in rho -> evaporation rate");
+
+		System.out.println("TESTING FOR RHO = 0.01");
+		this.runRho(0.01);
+		System.out.println("TESTING FOR RHO = 0.05");
+		this.runRho(0.05);
+		System.out.println("TESTING FOR RHO = 0.3");
+		this.runRho(0.3);
+		System.out.println("TESTING FOR RHO = 0.5");
+		this.runRho(0.5);
+
+	}
+
+
+	//runs test for specific rho
+	public void runRho(double specificRho) {
+		List<City> cities = getCityList(this.twoKTest);
+		List<List<Double>> acsList = new ArrayList<List<Double>>();
+		List<List<Double>> easList = new ArrayList<List<Double>>();
+
+		for(int i = 0; i < testNumFew; i++) {
+			List<Double> bests = new ArrayList<Double>();
+        	Environment env = new Environment(cities.size(), antNumBig, alpha, betaBig, specificRho, eliteNum, epsilon, 0.1, qNot);
+       		AntColonySystem acs = new AntColonySystem(env, cities, 50);
+			bests = acs.optimize();
+			acsList.add(bests);
+		}
+
+		for(int i = 0; i < testNumFew; i++) {
+			List<Double> bests = new ArrayList<Double>();
+        	Environment env = new Environment(cities.size(), antNumBig, alpha, betaBig, specificRho, eliteNum, epsilon, 0.1, qNot);
+       		ElitistAntSystem eas = new ElitistAntSystem(env, cities, 50);
+			bests = eas.optimize();
+			easList.add(bests);
+		}
+
+		List<Double> mediansACS = processList(acsList);
+		List<Double> mediansEAS = processList(easList);
+
+
+		System.out.println("Printing ACS medians for 2k evaporation changes: rho = "  + specificRho);
+		for (int i = 0; i < mediansACS.size(); i++) {
+			System.out.println(mediansACS.get(i));
+		}
+
+		System.out.println("Printing EAS medians for 2k evaporation changes: rho = " + specificRho);
+		for (int i = 0; i < mediansEAS.size(); i++) {
+			System.out.println(mediansEAS.get(i));
+		}
+	}
+
+
 
     public static List<Double> processList(List<List<Double>> doubleList) {
 
@@ -228,7 +283,6 @@ public class TestingSuite {
         int dimension = 0;
         String edgeWeightType = "";
         List<City> cities = new ArrayList<City>();
-        //filename = "d2103.tsp";
 
         try {
             File initialFile = new File(filename);
@@ -254,8 +308,6 @@ public class TestingSuite {
                 } else {
                     if (counter <= dimension) {
                         String[] temp = data.trim().replace("  ", " ").replace("  ", " ").split(" ");
-                        // System.out.println(data);
-                        // System.out.println("data 1 = [" + temp[0] + "]");
                         double xCoord = Double.parseDouble(temp[1].trim());
                         double yCoord = Double.parseDouble(temp[2].trim());
                         city = new City(counter, xCoord, yCoord);
@@ -264,8 +316,6 @@ public class TestingSuite {
                     }
                 }
             }
-
-            // System.out.println(cities);
             buffReader.close();
         } catch (IOException e) {
             System.out.println("IO Exception");
@@ -278,6 +328,19 @@ public class TestingSuite {
 
 		TestingSuite ts = new TestingSuite();
 
+		System.out.println("TWO THOUSANDS TEST");
+		ts.runTwoThousands();
+
+		System.out.println("THREE THOUSANDS TEST");
+		ts.runThreeThousands();
+
+		System.out.println("FOUR THOUSANDS TEST");
+		ts.runFourThousands();
+
+		System.out.println("FIVE THOUSANDS TEST");
 		ts.runFiveThousands();
+
+		System.out.println("RHO TEST");
+		ts.runEvaporationChanges();
 	}
 }

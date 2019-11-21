@@ -51,13 +51,10 @@ public class ElitistAntSystem {
             for (int j = 1; j < antList.size(); j++) {
                 double tourCost = antList.get(j).makeElitistProbTour();
                 this.env.addIterationPheromonesElitist(antList.get(j).getTour(), tourCost);
-                System.out.println("tour cost " + tourCost);
                 if (tourCost < bestSoFar) {
                     bestSoFar = tourCost;
-                    // System.out.println("the bestsofar" + bestSoFar);
                     bestAnt = antList.get(j).cloneAnt();
                 }
-                System.out.println("            best has a score of " + bestSoFar + "\n");
             }
             bestAntsList.add(bestAnt);
             int listSize = bestAntsList.size();
@@ -65,7 +62,7 @@ public class ElitistAntSystem {
 
             this.env.elitistGlobalPheromoneUpdate(lastBestAnt);
 
-            System.out.println("************** COMPLETED the " + i + "iteration");
+            System.out.println("************** COMPLETED the " + i + "iteration ..." + bestSoFar);
             i++;
 
             if(i % 10 == 0) {

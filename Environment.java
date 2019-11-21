@@ -193,6 +193,7 @@ public class Environment {
 
 		for (int i = 0; i < tour.length; i++) {
 			tourString += Integer.toString(tour[i]);
+			tourString += ".";
 		}
 		tourString += tour[0];
 
@@ -202,8 +203,10 @@ public class Environment {
 			for (int j = i; j < numCities; j++) {
 
 				String edge = Integer.toString(i);
+				edge += ".";
 				edge += Integer.toString(j);
 				String edgeReverse = Integer.toString(j);
+				edgeReverse += ".";
 				edgeReverse += Integer.toString(i);
 
 				double evaporatedPheromones = this.pheromones[i][j] * (1.0 - this.rho);

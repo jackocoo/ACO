@@ -32,37 +32,20 @@ public class AntColonySystem {
         int i = 0;
         Ant bestAnt = antList.get(0);
         double bestScore = Double.POSITIVE_INFINITY;
-        double bestSoFar = bestAnt.makeACSProbTour();
-        System.out.println("this is the best tour" + bestSoFar);
+
         while (i < this.numIterations) {
-            Ant iterBest = antList.get(0);
-            double iterBestScore = Double.POSITIVE_INFINITY;
+
             for (int j = 1; j < antList.size(); j++) {
                 double tourCost = antList.get(j).makeACSProbTour();
-                System.out.println("tour cost " + tourCost);
-                if (tourCost < bestSoFar) {
-                    bestSoFar = tourCost;
-                    // System.out.println("the bestsofar" + bestSoFar);
+                if (tourCost < bestScore) {
+                    bestScore = tourCost;
                     bestAnt = antList.get(j);
                     bestAnt = antList.get(j).cloneAnt();
                 }
-                if (tourCost < iterBestScore) {
-                    iterBestScore = tourCost;
-                    iterBest = antList.get(j);
-                }
-                // System.out.println("hit");
-                bestAntsList.add(bestAnt);
-                // System.out.println("best ant tour");
-                // bestAnt.printTour();
-                //System.out.println("            best has a score of " + bestSoFar + "\n");
-            }
-            // this.env.antColonySystemGlobalUpdate(bestAnt);
-            this.env.antColonySystemGlobalUpdate(iterBest);
 
-            if (iterBestScore < bestScore) {
-                bestScore = iterBestScore;
-                bestAnt = iterBest.cloneAnt();
+                bestAntsList.add(bestAnt);
             }
+            this.env.antColonySystemGlobalUpdate(bestAnt);
 
             System.out.println("************** COMPLETED the " + i + "iteration ... " + bestScore);
             i++;
