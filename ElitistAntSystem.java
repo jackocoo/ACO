@@ -15,7 +15,7 @@ public class ElitistAntSystem {
         this.numIterations = numIterations;
     }
 
-    public void optimize() {
+    public List<Double> optimize() {
         this.env.setElitismFactor();
         this.env.calculateDistances(cityList);
         Ant testAnt = new Ant(-1, this.env);
@@ -27,6 +27,7 @@ public class ElitistAntSystem {
         List<Ant> antList = this.env.getAntList();
         System.out.println(antList);
         List<Ant> bestAntsList = new ArrayList<Ant>();
+        List<Double> bests = new ArrayList<Double>();
 
         int i = 0;
         Ant bestAnt = antList.get(0);
@@ -53,6 +54,11 @@ public class ElitistAntSystem {
             System.out.println("************** COMPLETED the " + i + "iteration");
             i++;
 
+            if(i % 10 == 0) {
+                bests.add(bestSoFar);
+            }
+
         }
+        return bests;
     }
 }
