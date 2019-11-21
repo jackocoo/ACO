@@ -61,7 +61,7 @@ public class Environment {
 		this.numCities = numCities;
 		this.distances = new double[numCities][numCities];
 		this.pheromones = new double[numCities][numCities];
-		this.iterationPheromones = new double[1][1];
+		this.iterationPheromones = new double[numCities][numCities];
 		this.alpha = alpha;
 		this.beta = beta;
 		this.rho = rho;
