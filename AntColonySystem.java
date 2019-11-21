@@ -25,19 +25,19 @@ public class AntColonySystem {
 
         List<Ant> antList = this.env.getAntList();
         System.out.println(antList);
-        System.out.println(antList.get(0).makeProbTour());
+        System.out.println(antList.get(0).makeACSProbTour());
         List<Ant> bestAntsList = new ArrayList<Ant>();
 
         int i = 0;
         Ant bestAnt = antList.get(0);
         double bestScore = Double.POSITIVE_INFINITY;
-        double bestSoFar = bestAnt.makeProbTour();
+        double bestSoFar = bestAnt.makeACSProbTour();
         System.out.println("this is the best tour" + bestSoFar);
         while (i < this.numIterations) {
             Ant iterBest = antList.get(0);
             double iterBestScore = Double.NEGATIVE_INFINITY;
             for (int j = 1; j < antList.size(); j++) {
-                double tourCost = antList.get(j).makeProbTour();
+                double tourCost = antList.get(j).makeACSProbTour();
                 System.out.println("tour cost " + tourCost);
                 if (tourCost < bestSoFar) {
                     bestSoFar = tourCost;

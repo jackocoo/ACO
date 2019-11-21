@@ -26,7 +26,6 @@ public class ElitistAntSystem {
 
         List<Ant> antList = this.env.getAntList();
         System.out.println(antList);
-        System.out.println(antList.get(0).makeProbTour());
         List<Ant> bestAntsList = new ArrayList<Ant>();
 
         int i = 0;
